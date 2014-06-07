@@ -42,6 +42,8 @@ public:
 	bool needMoreBuffers() const;
 	void enqueueBuffer(const AudioBufferPtr & buffer);
 
+	Offset currentSample() const;
+
 private:
 	OpenALDevice & m_Device;
 	ALsizei m_Frequency;

@@ -107,3 +107,14 @@ void OpenALOutput::enqueueBuffer(const AudioBufferPtr & buffer)
 		OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alSourcePlay");
 	}
 }
+
+AudioOutput::Offset OpenALOutput::currentSample() const
+{
+	m_Device.bindContext();
+
+	ALint offset = 0;
+	alGetSourcei(m_Source, AL_SAMPLE_OFFSET, &offset);
+	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alGetSourcei(AL_SAMPLE_OFFSET)");
+
+	return offset;
+}

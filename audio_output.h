@@ -29,8 +29,12 @@
 class AudioOutput
 {
 public:
+	typedef unsigned long long Offset;
+
 	virtual bool needMoreBuffers() const = 0;
 	virtual void enqueueBuffer(const AudioBufferPtr & buffer) = 0;
+
+	virtual Offset currentSample() const = 0;
 
 protected:
 	inline AudioOutput() {}
