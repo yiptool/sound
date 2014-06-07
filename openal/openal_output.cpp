@@ -44,9 +44,6 @@ OpenALOutput::OpenALOutput(OpenALDevice & device, AudioFormat format, size_t hz)
 
 	alSourcei(m_Source, AL_LOOPING, AL_FALSE);
 	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alSourcei(AL_LOOPING, AL_FALSE)");
-
-	alSourcePlay(m_Source);
-	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alSourcePlay");
 }
 
 OpenALOutput::~OpenALOutput()
@@ -99,4 +96,14 @@ void OpenALOutput::enqueueBuffer(const AudioBufferPtr & buffer)
 
 	alSourceQueueBuffers(m_Source, 1, &bufferHandle);
 	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alSourceQueueBuffers");
+
+	ALint state = AL_INITIAL;
+	alGetSourcei(m_Source, AL_SOURCE_STATE, &state);
+	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alGetSourcei(AL_SOURCE_STATE)");
+
+	if (state != AL_PLAYING)
+	{
+		alSourcePlay(m_Source);
+		OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alSourcePlay");
+	}
 }
