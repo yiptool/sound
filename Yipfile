@@ -50,4 +50,6 @@ sources:ios,osx
 {
 	openal/openal_device.cpp
 	openal/openal_device.h
+	openal/openal_output.cpp
+	openal/openal_output.h
 }

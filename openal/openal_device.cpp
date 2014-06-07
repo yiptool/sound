@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 //
 #include "openal_device.h"
+#include "openal_output.h"
 #include <iostream>
 
 #ifdef __APPLE__
@@ -87,9 +88,7 @@ OpenALDevice::~OpenALDevice()
 
 AudioOutputPtr OpenALDevice::newOutput(AudioFormat format, size_t hz)
 {
-	Locker contextLocker(*this);
-	AudioOutputPtr output;// = std::make_shared<OpenALOutput>();
-	return output;
+	return std::make_shared<OpenALOutput>(*this, format, hz);
 }
 
 void OpenALDevice::checkError(const char * file, int line, const char * func)

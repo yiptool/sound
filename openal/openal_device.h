@@ -32,6 +32,8 @@
 #include <OpenAL/alc.h>
 #endif
 
+class OpenALOutput;
+
 class OpenALDevice : public AudioDevice
 {
 public:
@@ -65,6 +67,7 @@ private:
 	OpenALDevice & operator=(const OpenALDevice &) = delete;
 
 	friend class Locker;
+	friend class OpenALOutput;
 };
 
 #endif

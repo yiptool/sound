@@ -20,29 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#ifndef __21256e4f6d1e9633c5cc9b375c66bbcb__
-#define __21256e4f6d1e9633c5cc9b375c66bbcb__
+#ifndef __dee15910b47e289a960d41b3de18c377__
+#define __dee15910b47e289a960d41b3de18c377__
 
+#include "../audio_output.h"
+#include "openal_device.h"
 #include <yip-imports/cxx-util/macros.h>
 #include <vector>
-#include <memory>
 
-class AudioBuffer
+#ifdef __APPLE__
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#endif
+
+class OpenALOutput : public AudioOutput
 {
 public:
-	inline AudioBuffer() noexcept {}
-	inline AudioBuffer(size_t size) noexcept : m_Data(size) {}
+	OpenALOutput(OpenALDevice & device, AudioFormat format, size_t hz);
+	~OpenALOutput();
 
-	inline size_t size() const noexcept { return m_Data.size(); }
-	inline void resize(size_t size) { m_Data.resize(size); }
-
-	inline void * data() noexcept { return m_Data.data(); }
-	inline const void * data() const noexcept { return m_Data.data(); }
+	bool needMoreBuffers() const;
+	void enqueueBuffer(const AudioBufferPtr & buffer);
 
 private:
-	std::vector<char> m_Data;
-};
+	OpenALDevice & m_Device;
+	ALsizei m_Frequency;
+	ALenum m_Format;
+	ALuint m_Source;
+	std::vector<ALuint> m_Buffers;
 
-typedef std::shared_ptr<AudioBuffer> AudioBufferPtr;
+	OpenALOutput(const OpenALOutput &) = delete;
+	OpenALOutput & operator=(const OpenALOutput &) = delete;
+};
 
 #endif
