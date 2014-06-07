@@ -61,7 +61,7 @@ OpenALDevice::OpenALDevice()
 	AudioInterruptionListener_setCallback([this](bool activate) { m_Suspended = !activate; });
   #endif
 
-	Locker contextLocker(*this);
+	bindContext();
 	std::clog << "Sound: OpenAL vendor: " << alGetString(AL_VENDOR) << std::endl;
 	std::clog << "Sound: OpenAL renderer: " << alGetString(AL_RENDERER) << std::endl;
 	std::clog << "Sound: OpenAL version: " << alGetString(AL_VERSION) << std::endl;
@@ -91,6 +91,17 @@ AudioOutputPtr OpenALDevice::newOutput(AudioFormat format, size_t hz)
 	return std::make_shared<OpenALOutput>(*this, format, hz);
 }
 
+void OpenALDevice::bindContext()
+{
+	if (UNLIKELY(!alcMakeContextCurrent(m_Context)))
+		std::clog << "Sound: unable to activate OpenAL context." << std::endl;
+	else
+	{
+		while (alGetError() != AL_NO_ERROR)
+			;
+	}
+}
+
 void OpenALDevice::checkError(const char * file, int line, const char * func)
 {
 	for (;;)
@@ -102,25 +113,6 @@ void OpenALDevice::checkError(const char * file, int line, const char * func)
 		std::cerr << "Sound: " << func << ": " << alGetString(error) << " (in file " << file << " at line "
 			<< line << ")." << std::endl;
 	}
-}
-
-OpenALDevice::Locker::Locker(OpenALDevice & device)
-	: std::lock_guard<std::mutex>(device.m_Mutex),
-	  m_Device(device)
-{
-	if (UNLIKELY(!alcMakeContextCurrent(m_Device.m_Context)))
-		std::clog << "Sound: unable to activate OpenAL context." << std::endl;
-	else
-	{
-		while (alGetError() != AL_NO_ERROR)
-			;
-	}
-}
-
-OpenALDevice::Locker::~Locker()
-{
-	if (UNLIKELY(!alcMakeContextCurrent(nullptr)))
-		std::clog << "Sound: unable to deactivate OpenAL context." << std::endl;
 }
 
 AudioDevice & AudioDevice::instance()

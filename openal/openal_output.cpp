@@ -29,7 +29,7 @@ OpenALOutput::OpenALOutput(OpenALDevice & device, AudioFormat format, size_t hz)
 	  m_Format(AL_NONE),
 	  m_Source(0)
 {
-	OpenALDevice::Locker locker(m_Device);
+	m_Device.bindContext();
 
 	switch (format)
 	{
@@ -48,7 +48,7 @@ OpenALOutput::OpenALOutput(OpenALDevice & device, AudioFormat format, size_t hz)
 
 OpenALOutput::~OpenALOutput()
 {
-	OpenALDevice::Locker locker(m_Device);
+	m_Device.bindContext();
 
 	alDeleteSources(1, &m_Source);
 	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alDeleteSources");
@@ -59,7 +59,7 @@ OpenALOutput::~OpenALOutput()
 
 bool OpenALOutput::needMoreBuffers() const
 {
-	OpenALDevice::Locker locker(m_Device);
+	m_Device.bindContext();
 
 	ALint numBuffers = 0;
 	alGetSourcei(m_Source, AL_BUFFERS_PROCESSED, &numBuffers);
@@ -70,13 +70,13 @@ bool OpenALOutput::needMoreBuffers() const
 
 void OpenALOutput::enqueueBuffer(const AudioBufferPtr & buffer)
 {
-	OpenALDevice::Locker locker(m_Device);
-	ALuint bufferHandle = 0;
+	m_Device.bindContext();
 
 	ALint numBuffers = 0;
 	alGetSourcei(m_Source, AL_BUFFERS_PROCESSED, &numBuffers);
 	OpenALDevice::checkError(__FILE__, __LINE__ - 1, "alGetSourcei(AL_BUFFERS_PROCESSED)");
 
+	ALuint bufferHandle = 0;
 	if (numBuffers > 0)
 	{
 		alSourceUnqueueBuffers(m_Source, 1, &bufferHandle);

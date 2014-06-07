@@ -37,19 +37,6 @@ class OpenALOutput;
 class OpenALDevice : public AudioDevice
 {
 public:
-	class Locker : public std::lock_guard<std::mutex>
-	{
-	public:
-		Locker(OpenALDevice & device);
-		~Locker();
-
-	private:
-		OpenALDevice & m_Device;
-
-		Locker(const Locker &) = delete;
-		Locker & operator=(const Locker &) = delete;
-	};
-
 	OpenALDevice();
 	~OpenALDevice();
 
@@ -61,12 +48,12 @@ private:
 
 	AudioOutputPtr newOutput(AudioFormat format, size_t hz);
 
+	void bindContext();
 	static void checkError(const char * file, int line, const char * func);
 
 	OpenALDevice(const OpenALDevice &) = delete;
 	OpenALDevice & operator=(const OpenALDevice &) = delete;
 
-	friend class Locker;
 	friend class OpenALOutput;
 };
 
