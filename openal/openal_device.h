@@ -25,7 +25,6 @@
 
 #include "../audio_device.h"
 #include <yip-imports/cxx-util/macros.h>
-#include <mutex>
 
 #ifdef __APPLE__
 #include <OpenAL/al.h>
@@ -43,7 +42,6 @@ public:
 private:
 	ALCdevice * m_Device;
 	ALCcontext * m_Context;
-	std::mutex m_Mutex;
 	bool m_Suspended;
 
 	AudioOutputPtr newOutput(AudioFormat format, size_t hz);
