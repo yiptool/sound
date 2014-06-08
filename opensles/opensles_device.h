@@ -20,28 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#ifndef __a16676bd4b0d710b6e53803dfcde9183__
-#define __a16676bd4b0d710b6e53803dfcde9183__
+#ifndef __24f53444c7070fd81dad845cfbf5a2cb__
+#define __24f53444c7070fd81dad845cfbf5a2cb__
 
-#include "audio_buffer.h"
-#include <memory>
+#include "../audio_device.h"
+#include <yip-imports/cxx-util/macros.h>
+#include <SLES/OpenSLES.h>
 
-class AudioOutput
+class OpenSLESOutput;
+
+class OpenSLESDevice : public AudioDevice
 {
 public:
-	typedef unsigned long long Offset;
+	OpenSLESDevice();
+	~OpenSLESDevice();
 
-	virtual bool needMoreBuffers() const = 0;
-	virtual void enqueueBuffer(const AudioBufferPtr & buffer) = 0;
+private:
+	SLObjectItf m_EngineObj;
+	SLEngineItf m_Engine;
+	SLObjectItf m_OutputMixObj;
 
-protected:
-	inline AudioOutput() {}
-	virtual inline ~AudioOutput() {}
+	AudioOutputPtr newOutput(AudioFormat format, size_t hz);
 
-	AudioOutput(const AudioOutput &) = delete;
-	AudioOutput & operator=(const AudioOutput &) = delete;
+	OpenSLESDevice(const OpenSLESDevice &) = delete;
+	OpenSLESDevice & operator=(const OpenSLESDevice &) = delete;
+
+	friend class OpenSLESOutput;
 };
-
-typedef std::shared_ptr<AudioOutput> AudioOutputPtr;
 
 #endif

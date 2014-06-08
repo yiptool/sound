@@ -20,28 +20,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-#ifndef __a16676bd4b0d710b6e53803dfcde9183__
-#define __a16676bd4b0d710b6e53803dfcde9183__
+#ifndef __dee15910b47e289a960d41b3de18c377__
+#define __dee15910b47e289a960d41b3de18c377__
 
-#include "audio_buffer.h"
-#include <memory>
+#include "../audio_output.h"
+#include "opensles_device.h"
+#include <yip-imports/cxx-util/macros.h>
+#include <vector>
+#include <atomic>
+#include <SLES/OpenSLES.h>
 
-class AudioOutput
+class OpenSLESOutput : public AudioOutput
 {
 public:
-	typedef unsigned long long Offset;
+	OpenSLESOutput(OpenSLESDevice & device, AudioFormat format, size_t hz);
+	~OpenSLESOutput();
 
-	virtual bool needMoreBuffers() const = 0;
-	virtual void enqueueBuffer(const AudioBufferPtr & buffer) = 0;
+	bool needMoreBuffers() const;
+	void enqueueBuffer(const AudioBufferPtr & buffer);
 
-protected:
-	inline AudioOutput() {}
-	virtual inline ~AudioOutput() {}
+private:
+	OpenSLESDevice & m_Device;
+	SLObjectItf m_PlayerObj;
+	SLPlayItf m_Play;
+	SLBufferQueueItf m_BufferQueue;
+	SLVolumeItf m_Volume;
+	std::atomic<int> m_NeedMoreBuffers;
 
-	AudioOutput(const AudioOutput &) = delete;
-	AudioOutput & operator=(const AudioOutput &) = delete;
+	static void callback(SLBufferQueueItf itf, void * ud);
+
+	OpenSLESOutput(const OpenSLESOutput &) = delete;
+	OpenSLESOutput & operator=(const OpenSLESOutput &) = delete;
 };
-
-typedef std::shared_ptr<AudioOutput> AudioOutputPtr;
 
 #endif

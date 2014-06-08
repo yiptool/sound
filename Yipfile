@@ -53,3 +53,11 @@ sources:ios,osx
 	openal/openal_output.cpp
 	openal/openal_output.h
 }
+
+sources:android
+{
+	opensles/opensles_device.cpp
+	opensles/opensles_device.h
+	opensles/opensles_output.cpp
+	opensles/opensles_output.h
+}
