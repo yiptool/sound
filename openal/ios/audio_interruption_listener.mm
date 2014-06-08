@@ -65,13 +65,13 @@ static std::function<void(bool)> g_Callback;
 {
 	g_Instance = [AudioInterruptionListener new];
 
-	AVAudioSession * audioSession;
+	AVAudioSession * audioSession = [AVAudioSession sharedInstance];
 	[[NSNotificationCenter defaultCenter] addObserver:g_Instance
 		selector:@selector(audioSessionDidChangeInterruptionType:) name:AVAudioSessionInterruptionNotification
 		object:audioSession];
 
 	NSString * category = nil;
-	if (![audioSession otherAudioPlaying])
+	if (!audioSession.otherAudioPlaying)
 	{
 		NSLog(@"Sound: using the AVAudioSessionCategorySoloAmbient audio session category.");
 		category = AVAudioSessionCategorySoloAmbient;
