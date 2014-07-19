@@ -84,7 +84,7 @@ OpenSLESOutput::OpenSLESOutput(OpenSLESDevice & device, AudioFormat format, size
 		return;
 	}
 
-	result = (*m_PlayerObj)->GetInterface(m_PlayerObj, SL_IID_BUFFERQUEUE, &m_Volume);
+	result = (*m_PlayerObj)->GetInterface(m_PlayerObj, SL_IID_VOLUME, &m_Volume);
 	if (UNLIKELY(result != SL_RESULT_SUCCESS))
 	{
 		std::clog << "Sound: unable to get OpenSL volume interface." << std::endl;
